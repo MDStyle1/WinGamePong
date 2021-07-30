@@ -1,7 +1,5 @@
 package com.mds.wingame;
 
-import com.mds.game.GameInterface;
-import com.mds.wingame.window.GameWindow;
 import com.mds.game.Game;
 import com.mds.wingame.window.VisualEvent;
 

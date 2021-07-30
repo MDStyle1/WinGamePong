@@ -5,6 +5,7 @@ import com.mds.game.GameInterface;
 import com.mds.game.controller.PlayerControllerInterface;
 import com.mds.game.map.MapInterface;
 import com.mds.game.map.objects.ObjectMap;
+import com.mds.game.map.objects.ObjectMapInterface;
 import com.mds.game.map.objects.TypeObject;
 import com.mds.game.util.Vector2d;
 import com.mds.wingame.Starter;
@@ -70,7 +71,7 @@ public class GameWindow extends JFrame{
         setVisible(true);
     }
     private void onRepaint(Graphics g){
-        List<ObjectMap> objects= map.getObjectsMap();
+        List<ObjectMapInterface> objects= map.getObjectsMap();
         g.drawLine(100,0,100,map.getSizeY());
         g.drawLine(100,0,map.getSizeX()+100,0);
         g.drawLine(100,map.getSizeY(),map.getSizeX()+100,map.getSizeY());
@@ -88,29 +89,14 @@ public class GameWindow extends JFrame{
                 str="Player win!!";
             }str="Bot win!!!";
             g.drawString(str,200,200);
-        }for(ObjectMap o:objects){
+        }for(ObjectMapInterface o:objects){
             TypeObject type = o.getTypeObject();
             switch (type){
                 case ball:
-                    Vector2d vectorMove = o.getForwardVector();
-                    g.drawLine(o.getX()+100,
-                            o.getY(),
-                            o.getX()+(int)vectorMove.getX()*50+100,
-                            o.getY()+(int)vectorMove.getY()*50);
                     g.drawOval(o.getX()-o.getSizeX()+100,o.getY()-o.getSizeY(),
-                            o.getR()*scaleGame,o.getR()*scaleGame);
-                    vectorMove=o.testV1;
-                    g.drawLine(o.getX()+100,
-                            o.getY(),
-                            o.getX()+(int)vectorMove.getX()*15+100,
-                            o.getY()+(int)vectorMove.getY()*15);
+                            o.getR()*2,o.getR()*scaleGame);
                     break;
                 case board:
-                    vectorMove = o.getForwardVector();
-                    g.drawLine(o.getX()+100,
-                            o.getY(),
-                            o.getX()+(int)vectorMove.getX()*50+100,
-                            o.getY()+(int)vectorMove.getY()*50);
                     g.drawLine(o.getX()-o.getSizeX()+100,
                             o.getY()+o.getSizeY(),
                             o.getX()+o.getSizeX()+100,
