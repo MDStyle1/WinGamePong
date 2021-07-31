@@ -1,14 +1,10 @@
 package com.mds.wingame.window;
 
-import com.mds.game.Game;
 import com.mds.game.GameInterface;
 import com.mds.game.controller.PlayerControllerInterface;
 import com.mds.game.map.MapInterface;
-import com.mds.game.map.objects.ObjectMap;
 import com.mds.game.map.objects.ObjectMapInterface;
 import com.mds.game.map.objects.TypeObject;
-import com.mds.game.util.Vector2d;
-import com.mds.wingame.Starter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,19 +21,20 @@ public class GameWindow extends JFrame{
     private int player;
     private boolean isKey=false;
     private int key=0;
-    private PlayerControllerInterface playerController;
+    private PlayerControllerInterface playerController1;
+    private PlayerControllerInterface playerController2;
     private GameField game_field;
     public GameWindow(GameInterface game) throws HeadlessException {
         this.game=game;
         scaleGame = 2;
     }
 
-    public void startWindow(Starter starter) {
-        map = starter.map;
-        playerController=starter.player;
+    public void startWindow() {
+        map = game.getMap();
+        playerController1 =game.getPlayer1();
+        playerController2 = game.getPlayer2();
         settingWindowStart();
         startGame();
-        game.playPause();
     }
 
     private void settingWindowStart(){
@@ -49,22 +46,16 @@ public class GameWindow extends JFrame{
             @Override
             public void keyPressed(KeyEvent e) {
                 int key= e.getKeyCode();
-                if(key==65){
-                    keyTap(1,true);
-                }else if(key==68){
-                    keyTap(2,true);
-                } else if(key==32){
-                    keyTap(3,true);
+                if(key==65||key==68||key==32||key==37||key==39){
+                    keyTap(key,true);
                 }
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
                 int key= e.getKeyCode();
-                if(key==65){
-                    keyTap(1,false);
-                }else if(key==68){
-                    keyTap(2,false);
+                if(key==65||key==68||key==37||key==39){
+                    keyTap(key,false);
                 }
             }
         });
@@ -76,18 +67,14 @@ public class GameWindow extends JFrame{
         g.drawLine(100,0,map.getSizeX()+100,0);
         g.drawLine(100,map.getSizeY(),map.getSizeX()+100,map.getSizeY());
         g.drawLine(map.getSizeX()+100,0,map.getSizeX()+100,map.getSizeY());
-        if(isKey){
-            String str=new String("");
-            if(key==1){
-                str="Key down A";
-            } else str="Key down D";
-            g.drawString(str,200,350);
-        }
+        g.drawString("Player1 A D", 220,100);
+        g.drawString("Player2 arrowLEft arrowRight",220,120);
+        g.drawString("Pause spacebar",220,140);
         if(end){
             String str=new String("");
             if(player==1){
-                str="Player win!!";
-            }str="Bot win!!!";
+                str="Player1 win!!";
+            }str="Player2 win!!!";
             g.drawString(str,200,200);
         }for(ObjectMapInterface o:objects){
             TypeObject type = o.getTypeObject();
@@ -141,11 +128,21 @@ public class GameWindow extends JFrame{
         isKey=is;
         key=i;
         if(isKey){
-            if(i==1){
-                playerController.move(-1);
-            } else if(i==2) {
-                playerController.move(1);
+            if(i==65){
+                playerController1.move(-1);
+            } else if(i==68) {
+                playerController1.move(1);
+            } else if(i==37){
+                playerController2.move(-1);
+            } else if(i==39) {
+                playerController2.move(1);
             } else game.playPause();
-        }else  playerController.move(0);
+        }else {
+            if(i==65||i==68){
+                playerController1.move(0);
+            } else if(i==37||i==39){
+                playerController2.move(0);
+            }
+        }
     }
 }

@@ -1,6 +1,5 @@
 package com.mds.wingame;
 
-import com.mds.game.Game;
 import com.mds.wingame.window.VisualEvent;
 
 public class WinGame {
@@ -11,6 +10,5 @@ public class WinGame {
     private VisualEvent visualEvent;
     private void Start(){
         visualEvent=new VisualEvent();
-        Game.createGame(visualEvent);
     }
 }
