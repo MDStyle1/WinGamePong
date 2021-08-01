@@ -2,6 +2,7 @@ package com.mds.wingame.window;
 
 import com.mds.game.Game;
 import com.mds.game.GameInterface;
+import com.mds.game.Main;
 import com.mds.game.VisualEventInterface;
 
 public class VisualEvent implements VisualEventInterface {
@@ -9,7 +10,9 @@ public class VisualEvent implements VisualEventInterface {
     private GameInterface myGame;
 
     public VisualEvent() {
-        myGame = Game.createGame(this);
+        Main main = new Main();
+        myGame = main.getGame();
+        myGame.setVisualEventInterface(this);
         gameWindow = new GameWindow(myGame);
         myGame.createMapAndStart();
     }
