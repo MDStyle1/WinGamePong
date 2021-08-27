@@ -1,33 +1,27 @@
 package com.mds.wingame.window;
 
-import com.mds.game.Game;
-import com.mds.game.GameInterface;
 import com.mds.game.Main;
-import com.mds.game.VisualEventInterface;
+import com.mds.game.MainInterface;
 
-public class VisualEvent implements VisualEventInterface {
-    public GameWindow gameWindow;
-    private GameInterface myGame;
+public class VisualEvent implements Main.EventMain {
+    public MainInterface main;
+    public MainWindow mainWindow;
 
     public VisualEvent() {
-        Main main = new Main();
-        myGame = main.getGame();
-        myGame.setVisualEventInterface(this);
-        gameWindow = new GameWindow(myGame);
-        myGame.createMapAndStart();
+        mainWindow=new MainWindow();
+        mainWindow.startWindow();
+        main = Main.createMain();
+        main.setEventMain(this);
+        mainWindow.startMenu(main);
     }
 
     @Override
-    public void eventEndGame(int i) {
-        gameWindow.endGame(i);
+    public void gameIsCreate() {
+        mainWindow.gameIsStart();
     }
 
     @Override
-    public void eventCreateGame() {
-    }
+    public void endGame() {
 
-    @Override
-    public void eventGameStart() {
-        gameWindow.startWindow();
     }
 }
