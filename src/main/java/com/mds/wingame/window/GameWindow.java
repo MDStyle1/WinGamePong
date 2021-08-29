@@ -20,6 +20,7 @@ public class GameWindow extends JPanel {
     public MainWindow mainWindow;
     private GameInterface gameInterface;
     private GameDraw gameDraw;
+    private TextScore textScore;
     public GameWindow(MainWindow mainWindow,GameInterface gameInterface){
         this.mainWindow=mainWindow;
         this.gameInterface=gameInterface;
@@ -29,7 +30,13 @@ public class GameWindow extends JPanel {
         add(new ButMenu());
         gameDraw = new GameDraw(100,10,gameInterface.getSizeX(),gameInterface.getSizeY());
         add(gameDraw);
+        textScore=new TextScore();
+        add(textScore);
         blockControll=false;
+    }
+
+    private void updateScore(){
+        if(textScore!=null)textScore.setText("Score:"+gameInterface.getScore());
     }
 
     public void keyTap(int i,boolean is){
@@ -90,11 +97,12 @@ public class GameWindow extends JPanel {
             paintGameWindow(g);
             paintGameMap(g);
             paintHelpControl(g);
+            updateScore();
         }
         private void paintHelpControl(Graphics g){
             g.drawString("Player1 A D", 5,100);
-            g.drawString("Player2 <- ->",5,120);
-            g.drawString("Pause spacebar",5,140);
+//            g.drawString("Player2 <- ->",5,120);
+            g.drawString("Pause spacebar",5,120);
         }
         private void paintGameWindow(Graphics g){
             g.drawLine(x+0,y+0,x+ width,y+0);
@@ -133,6 +141,13 @@ public class GameWindow extends JPanel {
                         break;
                 }
             }
+        }
+    }
+
+    private class TextScore extends JLabel{
+        public TextScore() {
+            setBounds(10,40,80,25);
+            setText("Score:0");
         }
     }
 

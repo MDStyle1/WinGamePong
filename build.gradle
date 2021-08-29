@@ -1,20 +1,24 @@
 plugins {
+    id 'org.springframework.boot' version '2.5.3'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
 }
 
 group 'com.mds'
-version '1.0-SNAPSHOT'
+version 'reliseV0.1'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    //implementation files('lib/JavaGame.main.jar')
+    //testCompile group: 'junit', name: 'junit', version: '4.12'
     implementation 'org.springframework:spring-core:5.3.9'
     implementation 'org.springframework:spring-context:5.3.9'
-    compile files('lib/JavaGame.main.jar')
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.5.3'
+    //compile file('lib/JavaGame.main.jar')
+    //compile fileTree(dir: 'lib', include: '*.jar')
+    implementation files('lib/JavaGame.main.jar')
 }
 
 jar {
@@ -22,7 +26,7 @@ jar {
         attributes "Main-Class": "com.mds.wingame.WinGame"
     }
 
-    from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    }
+//    from {
+//        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+//    }
 }

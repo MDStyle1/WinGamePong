@@ -1,6 +1,7 @@
 package com.mds.wingame.window;
 
 import com.mds.game.MainInterface;
+import com.mds.game.client.ScoreInfo;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.List;
 
 public class MainWindow extends JFrame{
 
@@ -16,6 +18,7 @@ public class MainWindow extends JFrame{
     private GameWindow gameWindow;
     private boolean gameControl = false;
     private AuthWindow authWindow;
+    private ScoresWindow scoresWindow;
     public MainWindow() throws HeadlessException {
     }
 
@@ -74,6 +77,15 @@ public class MainWindow extends JFrame{
         authWindow.setVisible(true);
         openCloseMainMenu();
     }
+    public void openScores(){
+        if(scoresWindow==null){
+            scoresWindow = new ScoresWindow();
+            add(scoresWindow);
+        }
+        scoresWindow.updateScores(mainInterface.getScoresTop10());
+        scoresWindow.setVisible(true);
+        openCloseMainMenu();
+    }
     private void startGame(boolean login){
         if(login){
             if(authWindow.checkBoxOnline.isSelected()){
@@ -99,10 +111,9 @@ public class MainWindow extends JFrame{
     private class MainMenuWindow extends JPanel{
         public MainMenuWindow(){
             setFocusable(false);
-            ButStart butStart = new ButStart();
             setLayout(null);
-            add(butStart);
-
+            add(new ButStart());
+            add(new ButScores());
         }
         private class ButStart extends JButton{
             public ButStart() {
@@ -118,7 +129,22 @@ public class MainWindow extends JFrame{
                 }
             }
         }
+        private class ButScores extends JButton{
+            public ButScores() {
+                setFocusable(false);
+                setBounds(10,40,100,25);
+                setFocusPainted(false);
+                setText("Scores");
+                addActionListener(new MyActionListener());
+            }
+            private class MyActionListener implements ActionListener {
+                public void actionPerformed(ActionEvent e) {
+                    openScores();
+                }
+            }
+        }
     }
+
     private class AuthWindow extends JPanel{
         private TextLogin textLogin;
         private TextPassword textPassword;
@@ -199,6 +225,44 @@ public class MainWindow extends JFrame{
         private class TextPassword extends JTextArea{
             public TextPassword() {
                 setBounds(10,35,100,15);
+            }
+        }
+    }
+
+    private class ScoresWindow extends JPanel{
+        private TextPanel scoresPanel;
+        public ScoresWindow(){
+            setFocusable(false);
+            setLayout(null);
+            scoresPanel = new TextPanel();
+            add(new ButMenu());
+            add(scoresPanel);
+        }
+        public void updateScores(List<ScoreInfo> scoreInfoList){
+            StringBuilder stringBuilder=new StringBuilder();
+            for(ScoreInfo scoreInfo:scoreInfoList){
+                stringBuilder.append(scoreInfo.name+" : "+scoreInfo.score+"\n");
+            }
+            scoresPanel.setText(stringBuilder.toString());
+        }
+        private class ButMenu extends JButton{
+            public ButMenu() {
+                setFocusable(false);
+                setBounds(10,10,100,25);
+                setText("Menu");
+                addActionListener(new MyActionListener());
+            }
+            private class MyActionListener implements ActionListener {
+                public void actionPerformed(ActionEvent e) {
+                    scoresWindow.setVisible(false);
+                    openCloseMainMenu();
+                }
+            }
+        }
+        private class TextPanel extends JTextPane{
+            public TextPanel() {
+                setEditable(false);
+                setBounds(10,40,100,200);
             }
         }
     }
