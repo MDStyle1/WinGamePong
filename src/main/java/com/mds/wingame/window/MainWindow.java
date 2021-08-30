@@ -25,6 +25,10 @@ public class MainWindow extends JFrame{
     public void startWindow() {
         settingWindowStart();
     }
+    public void deleteAuth(){
+        remove(authWindow);
+        authWindow=null;
+    }
     public void startMenu(MainInterface mainInterface){
         this.mainInterface=mainInterface;
         mainMenuWindow = new MainMenuWindow();
@@ -73,8 +77,13 @@ public class MainWindow extends JFrame{
         if(authWindow==null){
             authWindow = new AuthWindow();
             add(authWindow);
+        } else {
+            if(mainInterface.isAuth()){
+                startGame(true);
+            } else {
+                authWindow.setVisible(true);
+            }
         }
-        authWindow.setVisible(true);
         openCloseMainMenu();
     }
     public void openScores(){
@@ -88,14 +97,19 @@ public class MainWindow extends JFrame{
     }
     private void startGame(boolean login){
         if(login){
-            if(authWindow.checkBoxOnline.isSelected()){
-                mainInterface.authServer(authWindow.textLogin.getText(),authWindow.textPassword.getText());
-            } else {
-                mainInterface.authServer();
+            if(!mainInterface.isAuth()){
+                if(authWindow.checkBoxOnline.isSelected()){
+                    if(!mainInterface.authServer(authWindow.textLogin.getText(),authWindow.textPassword.getText())){
+                        return;
+                    }
+                } else {
+                    if(!mainInterface.authServer()){
+                        return;
+                    }
+                }
+                authWindow.setVisible(false);
+                mainMenuWindow.login();
             }
-            authWindow.setVisible(false);
-            remove(authWindow);
-            authWindow=null;
             mainInterface.createGame();
         }else {
             mainInterface.registerServer(authWindow.textLogin.getText(),authWindow.textPassword.getText());
@@ -109,12 +123,16 @@ public class MainWindow extends JFrame{
     }
 
     private class MainMenuWindow extends JPanel{
+        private ButLogout butLogout;
         public MainMenuWindow(){
             setFocusable(false);
             setLayout(null);
+            butLogout=new ButLogout();
             add(new ButStart());
             add(new ButScores());
+            add(butLogout);
         }
+        public void login(){ butLogout.setEnabled(true);}
         private class ButStart extends JButton{
             public ButStart() {
                 setFocusable(false);
@@ -140,6 +158,23 @@ public class MainWindow extends JFrame{
             private class MyActionListener implements ActionListener {
                 public void actionPerformed(ActionEvent e) {
                     openScores();
+                }
+            }
+        }
+        private class ButLogout extends JButton{
+            public ButLogout() {
+                setFocusable(false);
+                setBounds(10,70,100,25);
+                setFocusPainted(false);
+                setEnabled(false);
+                setText("Logout");
+                addActionListener(new MyActionListener());
+            }
+            private class MyActionListener implements ActionListener {
+                public void actionPerformed(ActionEvent e) {
+                    setEnabled(false);
+                    mainInterface.loggout();
+                    deleteAuth();
                 }
             }
         }
