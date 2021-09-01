@@ -1,5 +1,6 @@
 package com.mds.wingame.window;
 
+import com.mds.game.Main;
 import com.mds.game.MainInterface;
 import com.mds.game.client.ScoreInfo;
 
@@ -19,6 +20,7 @@ public class MainWindow extends JFrame{
     private boolean gameControl = false;
     private AuthWindow authWindow;
     private ScoresWindow scoresWindow;
+    private MainWindow mainWindow=this;
     public MainWindow() throws HeadlessException {
     }
 
@@ -74,17 +76,8 @@ public class MainWindow extends JFrame{
         mainMenuWindow.setVisible(!mainMenuWindow.isVisible());
     }
     public void beginStartGame(){
-        if(authWindow==null){
-            authWindow = new AuthWindow();
-            add(authWindow);
-        } else {
-            if(mainInterface.isAuth()){
-                startGame(true);
-            } else {
-                authWindow.setVisible(true);
-            }
-        }
         openCloseMainMenu();
+        mainInterface.createGame();
     }
     public void openScores(){
         if(scoresWindow==null){
@@ -110,7 +103,6 @@ public class MainWindow extends JFrame{
                 authWindow.setVisible(false);
                 mainMenuWindow.login();
             }
-            mainInterface.createGame();
         }else {
             mainInterface.registerServer(authWindow.textLogin.getText(),authWindow.textPassword.getText());
         }
@@ -124,20 +116,23 @@ public class MainWindow extends JFrame{
 
     private class MainMenuWindow extends JPanel{
         private ButLogout butLogout;
+        private ButStart butStart;
         public MainMenuWindow(){
             setFocusable(false);
             setLayout(null);
             butLogout=new ButLogout();
-            add(new ButStart());
+            butStart = new ButStart();
+            add(butStart);
             add(new ButScores());
             add(butLogout);
         }
-        public void login(){ butLogout.setEnabled(true);}
+        public void login(){ butLogout.setText("Logout");butStart.setEnabled(true);openCloseMainMenu();}
         private class ButStart extends JButton{
             public ButStart() {
                 setFocusable(false);
                 setBounds(10,10,100,25);
                 setFocusPainted(false);
+                setEnabled(false);
                 setText("Start game");
                 addActionListener(new MyActionListener());
             }
@@ -166,15 +161,26 @@ public class MainWindow extends JFrame{
                 setFocusable(false);
                 setBounds(10,70,100,25);
                 setFocusPainted(false);
-                setEnabled(false);
-                setText("Logout");
+                setText("Auth");
                 addActionListener(new MyActionListener());
             }
             private class MyActionListener implements ActionListener {
                 public void actionPerformed(ActionEvent e) {
-                    setEnabled(false);
-                    mainInterface.loggout();
-                    deleteAuth();
+                    if(mainInterface.isAuth()){
+                        setText("Auth");
+                        mainInterface.loggout();
+                        deleteAuth();
+                        butStart.setEnabled(false);
+                    }else {
+                        if(authWindow==null){
+                            authWindow = new AuthWindow();
+                            mainWindow.add(authWindow);
+                            authWindow.setVisible(true);
+                            openCloseMainMenu();
+                        } else {
+                            authWindow.setVisible(true);
+                        }
+                    }
                 }
             }
         }
@@ -189,7 +195,7 @@ public class MainWindow extends JFrame{
         }
 
         private void settingWindowStart(){
-            setLocation(200,100);
+            setLocation(0,0);
             setSize(400,200);
             setResizable(false);
             setLayout(null);
