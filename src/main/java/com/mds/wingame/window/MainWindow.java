@@ -1,7 +1,7 @@
 package com.mds.wingame.window;
 
-import com.mds.game.Main;
 import com.mds.game.MainInterface;
+import com.mds.game.chat.Chat;
 import com.mds.game.client.ScoreInfo;
 
 import javax.swing.*;
@@ -21,6 +21,7 @@ public class MainWindow extends JFrame{
     private AuthWindow authWindow;
     private ScoresWindow scoresWindow;
     private MainWindow mainWindow=this;
+    private ChatWindow chatWindow;
     public MainWindow() throws HeadlessException {
     }
 
@@ -36,12 +37,23 @@ public class MainWindow extends JFrame{
         mainMenuWindow = new MainMenuWindow();
         add(mainMenuWindow);
         addListener();
+        mainInterface.setEventChat(new Chat.EventChat() {
+            @Override
+            public void addMessage(List<String> list) {
+                System.out.println("addMes "+list);
+                chatWindow.addMessage(list);
+            }
+        });
+        chatWindow = new ChatWindow(200,200,mainInterface);
+        add(chatWindow);
+        repaint();
     }
 
     private void settingWindowStart(){
+        setLayout(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocation(200,100);
-        setSize(400,400);
+        setSize(450,400);
         setResizable(false);
         setVisible(true);
     }
@@ -75,6 +87,9 @@ public class MainWindow extends JFrame{
     public void openCloseMainMenu(){
         mainMenuWindow.setVisible(!mainMenuWindow.isVisible());
     }
+    public void openCloseChat(){
+        chatWindow.setVisible(!chatWindow.isVisible());
+    }
     public void beginStartGame(){
         openCloseMainMenu();
         mainInterface.createGame();
@@ -88,13 +103,14 @@ public class MainWindow extends JFrame{
         scoresWindow.setVisible(true);
         openCloseMainMenu();
     }
-    private void startGame(boolean login){
+    private void login(boolean login){
         if(login){
             if(!mainInterface.isAuth()){
                 if(authWindow.checkBoxOnline.isSelected()){
                     if(!mainInterface.authServer(authWindow.textLogin.getText(),authWindow.textPassword.getText())){
                         return;
                     }
+                    chatWindow.loginInChat();
                 } else {
                     if(!mainInterface.authServer()){
                         return;
@@ -112,6 +128,7 @@ public class MainWindow extends JFrame{
         add(gameWindow);
         gameControl=true;
         requestFocusInWindow();
+        openCloseChat();
     }
 
     private class MainMenuWindow extends JPanel{
@@ -125,13 +142,13 @@ public class MainWindow extends JFrame{
             add(butStart);
             add(new ButScores());
             add(butLogout);
+            setBounds(0,0,200,200);
         }
         public void login(){ butLogout.setText("Logout");butStart.setEnabled(true);openCloseMainMenu();}
         private class ButStart extends JButton{
             public ButStart() {
                 setFocusable(false);
                 setBounds(10,10,100,25);
-                setFocusPainted(false);
                 setEnabled(false);
                 setText("Start game");
                 addActionListener(new MyActionListener());
@@ -171,6 +188,7 @@ public class MainWindow extends JFrame{
                         mainInterface.loggout();
                         deleteAuth();
                         butStart.setEnabled(false);
+                        chatWindow.logoutInChat();
                     }else {
                         if(authWindow==null){
                             authWindow = new AuthWindow();
@@ -199,7 +217,6 @@ public class MainWindow extends JFrame{
             setSize(400,200);
             setResizable(false);
             setLayout(null);
-            setVisible(true);
             add(new ButMenu());
             add(new ButLogin());
             add(new ButRegister());
@@ -233,7 +250,7 @@ public class MainWindow extends JFrame{
             }
             private class MyActionListener implements ActionListener {
                 public void actionPerformed(ActionEvent e) {
-                    startGame(true);
+                    login(true);
                 }
             }
         }
@@ -246,7 +263,7 @@ public class MainWindow extends JFrame{
             }
             private class MyActionListener implements ActionListener {
                 public void actionPerformed(ActionEvent e) {
-                    startGame(false);
+                    login(false);
                 }
             }
         }

@@ -12,7 +12,7 @@ import java.awt.image.BufferedImage;
 
 public class GameWindow extends JPanel {
 
-    private boolean blockControll=true;
+    private boolean blockControl =true;
     private boolean isKey=false;
     private int key=0;
     private PlayerControllerInterface playerController1;
@@ -30,7 +30,8 @@ public class GameWindow extends JPanel {
         gameDraw = new GameDraw(100,10,gameInterface.getSizeX(),gameInterface.getSizeY());
         textScore=new TextScore();
         add(textScore);
-        blockControll=false;
+        blockControl =false;
+        setBounds(0,0,400,400);
     }
 
     private void updateScore(){
@@ -38,7 +39,7 @@ public class GameWindow extends JPanel {
     }
 
     public void keyTap(int i,boolean is){
-        if(blockControll){
+        if(blockControl){
             return;
         }
         isKey=is;
@@ -57,7 +58,7 @@ public class GameWindow extends JPanel {
     }
 
     private void openClose(){
-        blockControll=true;
+        blockControl =true;
         if(gameInterface.isPause()){
             gameInterface.playPause();
         }
@@ -83,6 +84,7 @@ public class GameWindow extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 openClose();
                 mainWindow.openCloseMainMenu();
+                mainWindow.openCloseChat();
             }
         }
     }
